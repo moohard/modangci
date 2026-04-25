@@ -6,9 +6,12 @@ use Modangci\Commands as Commands;
 
 class Init extends Commands
 {
-    private $_is = null;
+
+    private $_is = NULL;
+
     function __construct($ci, $resource)
     {
+
         parent::__construct($ci, $resource);
         $this->_ci->load->database();
 
@@ -25,23 +28,26 @@ class Init extends Commands
         $config['char_set'] = $this->_ci->db->char_set;
         $config['dbcollat'] = $this->_ci->db->dbcollat;
 
-        $this->_is = $this->_ci->load->database($config, true);
+        $this->_is = $this->_ci->load->database($config, TRUE);
     }
 
     private function insertDatas($table, $datas)
     {
+
         $this->_ci->db->trans_start();
         $this->_ci->db->insert($table, $datas);
         $this->_ci->db->trans_complete();
 
         if ($this->_ci->db->trans_status() === FALSE)
-            return false;
+
+            return FALSE;
         else
-            return true;
+            return TRUE;
     }
 
     private function get_by_id($table, $key)
     {
+
         $this->_ci->db->select('*');
         $this->_ci->db->from($table);
         $this->_ci->db->where($key);
@@ -51,11 +57,12 @@ class Init extends Commands
         if ($qr->num_rows() == 1)
             return $qr->row();
         else
-            return false;
+            return FALSE;
     }
 
     private function getConstraint($database, $table, $where)
     {
+
         $this->_is->select('KEY_COLUMN_USAGE.COLUMN_NAME,
         KEY_COLUMN_USAGE.TABLE_NAME,
         KEY_COLUMN_USAGE.CONSTRAINT_NAME, 
@@ -69,15 +76,17 @@ class Init extends Commands
 
         $qr = $this->_is->get();
 
-        if ($qr->num_rows() > 0) {
+        if ($qr->num_rows() > 0)
+        {
             $result = $qr->result();
             return $qr->result();
         } else
-            return false;
+            return FALSE;
     }
 
     private function getSchemaTable($database, $table)
     {
+
         $this->_is->select('COLUMNS.COLUMN_NAME,
                         COLUMNS.COLUMN_DEFAULT,
                         COLUMNS.IS_NULLABLE,DATA_TYPE,
@@ -100,22 +109,26 @@ class Init extends Commands
 
         $qr = $this->_is->get();
 
-        if ($qr->num_rows() > 0) {
+        if ($qr->num_rows() > 0)
+        {
             $result = $qr->result();
             return $qr->result();
         } else
-            return false;
+            return FALSE;
     }
 
     public function showdatabase()
     {
+
         $schemaTable = $this->_ci->db->list_tables();
         print_r($schemaTable);
     }
 
-    public function showtables($table = null)
+    public function showtables($table = NULL)
     {
-        if ($table != null and $table != "null") {
+
+        if ($table != NULL and $table != "null")
+        {
             $tables = $this->getSchemaTable($this->_ci->db->database, $table);
             print_r($tables);
         } else
@@ -124,199 +137,208 @@ class Init extends Commands
 
     public function auth()
     {
+
         $this->_command = "Init";
-        $this->_name = "Auth";
+        $this->_name    = "Auth";
 
         $default_modul = [
-            'modulgroup' => 'Modul Group',
-            'modul' => 'Modul',
-            'unit' => 'Unit',
-            'hakakses' => 'Hak Akses',
+            'modulgroup'    => 'Modul Group',
+            'modul'         => 'Modul',
+            'unit'          => 'Unit',
+            'hakakses'      => 'Hak Akses',
             'hakaksesmodul' => 'Hak Akses Modul',
-            'hakaksesunit' => 'Hak Akses Unit',
-            'pengguna' => 'Pengguna'
+            'hakaksesunit'  => 'Hak Akses Unit',
+            'pengguna'      => 'Pengguna',
         ];
 
         $this->_ci->load->dbforge();
-        $attributes = array('ENGINE' => 'InnoDB');
+        $attributes = array( 'ENGINE' => 'InnoDB' );
         //Create Table s_user_group
         $this->_message("Creating Table s_user_group...");
         $fields = [
-            'sgroupNama' => array(
-                'type' => 'VARCHAR',
+            'sgroupNama'       => array(
+                'type'       => 'VARCHAR',
                 'constraint' => '255',
-                'default' => '',
+                'default'    => '',
             ),
             'sgroupKeterangan' => array(
-                'type' => 'VARCHAR',
+                'type'       => 'VARCHAR',
                 'constraint' => '255',
-                'default' => '',
+                'default'    => '',
             ),
         ];
         $this->_ci->dbforge->add_field($fields);
         $this->_ci->dbforge->add_key('sgroupNama', TRUE);
         $this->_ci->dbforge->create_table('s_user_group', TRUE, $attributes);
-        $checkDatas = $this->get_by_id('s_user_group', ['sgroupNama' => 'ADMIN']);
+        $checkDatas = $this->get_by_id('s_user_group', [ 'sgroupNama' => 'ADMIN' ]);
         if (!$checkDatas)
             $this->insertDatas('s_user_group', [
-                'sgroupNama' => 'ADMIN',
-                'sgroupKeterangan' => 'ADMINISTRATOR'
+                'sgroupNama'       => 'ADMIN',
+                'sgroupKeterangan' => 'ADMINISTRATOR',
             ]);
-
 
         //Create Table s_unit
         $this->_message("Creating Table s_unit...");
         $fields = [
-            'unitId' => array(
-                'type' => 'INT',
-                'constraint' => 11,
+            'unitId'   => array(
+                'type'           => 'INT',
+                'constraint'     => 11,
                 'auto_increment' => TRUE,
             ),
             'unitKode' => array(
-                'type' => 'VARCHAR',
+                'type'       => 'VARCHAR',
                 'constraint' => '10',
-                'default' => '',
+                'default'    => '',
             ),
             'unitNama' => array(
-                'type' => 'VARCHAR',
+                'type'       => 'VARCHAR',
                 'constraint' => '75',
-                'default' => '',
+                'default'    => '',
             ),
         ];
         $this->_ci->dbforge->add_field($fields);
         $this->_ci->dbforge->add_key('unitId', TRUE);
         $this->_ci->dbforge->create_table('s_unit', TRUE, $attributes);
 
-
         //Create Table s_user_modul_group_ref
         $this->_message("Creating Table s_user_modul_group_ref...");
         $fields = [
-            'susrmdgroupNama' => array(
-                'type' => 'VARCHAR',
+            'susrmdgroupNama'    => array(
+                'type'       => 'VARCHAR',
                 'constraint' => '50',
-                'default' => '',
+                'default'    => '',
             ),
             'susrmdgroupDisplay' => array(
-                'type' => 'VARCHAR',
+                'type'       => 'VARCHAR',
                 'constraint' => '100',
-                'default' => '',
-                'null' => FALSE,
+                'default'    => '',
+                'null'       => FALSE,
             ),
-            'susrmdgroupIcon' => array(
-                'type' => 'VARCHAR',
+            'susrmdgroupIcon'    => array(
+                'type'       => 'VARCHAR',
                 'constraint' => '255',
-                'default' => '',
-                'null' => FALSE,
+                'default'    => '',
+                'null'       => FALSE,
             ),
         ];
         $this->_ci->dbforge->add_field($fields);
         $this->_ci->dbforge->add_key('susrmdgroupNama', TRUE);
         $this->_ci->dbforge->create_table('s_user_modul_group_ref', TRUE, $attributes);
-        $checkDatas = $this->get_by_id('s_user_modul_group_ref', ['susrmdgroupNama' => 'admin']);
+        $checkDatas = $this->get_by_id('s_user_modul_group_ref', [ 'susrmdgroupNama' => 'admin' ]);
         if (!$checkDatas)
         {
             $this->insertDatas('s_user_modul_group_ref', [
-                'susrmdgroupNama' => 'admin',
+                'susrmdgroupNama'    => 'admin',
                 'susrmdgroupDisplay' => 'Administrator',
-                'susrmdgroupIcon' => '<i class="la la-desktop"></i>'
+                'susrmdgroupIcon'    => '<i class="ki-duotone ki-setting-3 fs-1">
+                                        <span class="path1"></span>
+                                        <span class="path2"></span>
+                                        <span class="path3"></span>
+                                        <span class="path4"></span>
+                                        <span class="path5"></span>
+                                      </i>',
             ]);
             $this->insertDatas('s_user_modul_group_ref', [
-                'susrmdgroupNama' => 'tempmenu',
+                'susrmdgroupNama'    => 'tempmenu',
                 'susrmdgroupDisplay' => 'Temporary',
-                'susrmdgroupIcon' => '<i class="la la-star-o"></i>'
+                'susrmdgroupIcon'    => '<i class="ki-duotone ki-bookmark-2 fs-1">
+                                        <span class="path1"></span>
+                                        <span class="path2"></span>
+                                      </i>',
             ]);
         }
-            
 
         //Create Table s_user_modul_ref
         $this->_message("Creating Table s_user_modul_ref...");
         $fields = [
-            'susrmodulNama' => array(
-                'type' => 'VARCHAR',
+            'susrmodulNama'            => array(
+                'type'       => 'VARCHAR',
                 'constraint' => '255',
-                'default' => '',
+                'default'    => '',
             ),
-            'susrmodulNamaDisplay' => array(
-                'type' => 'VARCHAR',
+            'susrmodulNamaDisplay'     => array(
+                'type'       => 'VARCHAR',
                 'constraint' => '255',
-                'null' => FALSE,
+                'null'       => FALSE,
             ),
             'susrmodulSusrmdgroupNama' => array(
-                'type' => 'VARCHAR',
+                'type'       => 'VARCHAR',
                 'constraint' => '50',
-                'null' => FALSE,
+                'null'       => FALSE,
             ),
-            'susrmodulIsLogin' => array(
-                'type' => 'INT',
+            'susrmodulIsLogin'         => array(
+                'type'       => 'INT',
                 'constraint' => 4,
-                'default' => '1',
+                'default'    => '1',
             ),
-            'susrmodulUrut' => array(
-                'type' => 'INT',
+            'susrmodulUrut'            => array(
+                'type'       => 'INT',
                 'constraint' => 11,
-                'null' => FALSE,
+                'null'       => FALSE,
             ),
         ];
         $this->_ci->dbforge->add_field($fields);
         $this->_ci->dbforge->add_key('susrmodulNama', TRUE);
         $this->_ci->dbforge->create_table('s_user_modul_ref', TRUE, $attributes);
-        $checkConstraint = $this->getConstraint($this->_ci->db->database, 's_user_modul_ref', ['CONSTRAINT_NAME' => 's_user_modul_ref_ibfk_1']);
+        $checkConstraint = $this->getConstraint($this->_ci->db->database, 's_user_modul_ref', [ 'CONSTRAINT_NAME' => 's_user_modul_ref_ibfk_1' ]);
         if (!$checkConstraint)
             $this->_ci->dbforge->add_column('s_user_modul_ref', [
-                'CONSTRAINT s_user_modul_ref_ibfk_1 FOREIGN KEY (susrmodulSusrmdgroupNama) REFERENCES s_user_modul_group_ref (susrmdgroupNama) ON UPDATE CASCADE'
+                'CONSTRAINT s_user_modul_ref_ibfk_1 FOREIGN KEY (susrmodulSusrmdgroupNama) REFERENCES s_user_modul_group_ref (susrmdgroupNama) ON UPDATE CASCADE',
             ]);
         // Insert Datas s_user_modul_ref
         $i = 1;
-        foreach ($default_modul as $modul => $display) {
-            $checkDatas = $this->get_by_id('s_user_modul_ref', ['susrmodulNama' => $modul]);
+        foreach ($default_modul as $modul => $display)
+        {
+            $checkDatas = $this->get_by_id('s_user_modul_ref', [ 'susrmodulNama' => $modul ]);
             if (!$checkDatas)
                 $this->insertDatas('s_user_modul_ref', [
-                    'susrmodulNama' => $modul,
-                    'susrmodulNamaDisplay' => $display,
+                    'susrmodulNama'            => $modul,
+                    'susrmodulNamaDisplay'     => $display,
                     'susrmodulSusrmdgroupNama' => 'admin',
-                    'susrmodulIsLogin' => '1',
-                    'susrmodulUrut' => $i++,
+                    'susrmodulIsLogin'         => '1',
+                    'susrmodulUrut'            => $i++,
                 ]);
         }
 
         //Create Table s_user_group_modul
         $this->_message("Creating Table s_user_group_modul...");
         $fields = [
-            'sgroupmodulSgroupNama' => array(
-                'type' => 'VARCHAR',
+            'sgroupmodulSgroupNama'    => array(
+                'type'       => 'VARCHAR',
                 'constraint' => '255',
-                'default' => '',
+                'default'    => '',
             ),
             'sgroupmodulSusrmodulNama' => array(
-                'type' => 'VARCHAR',
+                'type'       => 'VARCHAR',
                 'constraint' => '100',
-                'default' => '',
+                'default'    => '',
             ),
             'sgroupmodulSusrmodulRead' => array(
-                'type' => 'INT',
+                'type'       => 'INT',
                 'constraint' => 11,
-                'default' => '1',
+                'default'    => '1',
             ),
         ];
         $this->_ci->dbforge->add_field($fields);
         $this->_ci->dbforge->add_key('sgroupmodulSgroupNama', TRUE);
         $this->_ci->dbforge->add_key('sgroupmodulSusrmodulNama', TRUE);
         $this->_ci->dbforge->create_table('s_user_group_modul', TRUE, $attributes);
-        $checkConstraint = $this->getConstraint($this->_ci->db->database, 's_user_group_modul', ['CONSTRAINT_NAME' => 's_user_group_modul_ibfk_1']);
-        $checkConstraint2 = $this->getConstraint($this->_ci->db->database, 's_user_group_modul', ['CONSTRAINT_NAME' => 's_user_group_modul_ibfk_2']);
+        $checkConstraint  = $this->getConstraint($this->_ci->db->database, 's_user_group_modul', [ 'CONSTRAINT_NAME' => 's_user_group_modul_ibfk_1' ]);
+        $checkConstraint2 = $this->getConstraint($this->_ci->db->database, 's_user_group_modul', [ 'CONSTRAINT_NAME' => 's_user_group_modul_ibfk_2' ]);
         if (!$checkConstraint and !$checkConstraint2)
             $this->_ci->dbforge->add_column('s_user_group_modul', [
                 'CONSTRAINT s_user_group_modul_ibfk_1 FOREIGN KEY (sgroupmodulSusrmodulNama) REFERENCES s_user_modul_ref (susrmodulNama) ON UPDATE CASCADE',
-                'CONSTRAINT s_user_group_modul_ibfk_2 FOREIGN KEY (sgroupmodulSgroupNama) REFERENCES s_user_group (sgroupNama) ON DELETE NO ACTION ON UPDATE CASCADE'
+                'CONSTRAINT s_user_group_modul_ibfk_2 FOREIGN KEY (sgroupmodulSgroupNama) REFERENCES s_user_group (sgroupNama) ON DELETE NO ACTION ON UPDATE CASCADE',
             ]);
         // Insert Datas s_user_group_modul
-        foreach ($default_modul as $modul => $display) {
-            $checkDatas = $this->get_by_id('s_user_group_modul', ['sgroupmodulSgroupNama' => 'ADMIN', 'sgroupmodulSusrmodulNama' => $modul]);
+        foreach ($default_modul as $modul => $display)
+        {
+            $checkDatas = $this->get_by_id('s_user_group_modul', [ 'sgroupmodulSgroupNama' => 'ADMIN', 'sgroupmodulSusrmodulNama' => $modul ]);
             if (!$checkDatas)
                 $this->insertDatas('s_user_group_modul', [
-                    'sgroupmodulSgroupNama' => 'ADMIN',
+                    'sgroupmodulSgroupNama'    => 'ADMIN',
                     'sgroupmodulSusrmodulNama' => $modul,
-                    'sgroupmodulSusrmodulRead' => '1'
+                    'sgroupmodulSusrmodulRead' => '1',
                 ]);
         }
 
@@ -324,99 +346,98 @@ class Init extends Commands
         $this->_message("Creating Table s_user_group_unit...");
         $fields = [
             'sgroupunitSgroupNama' => array(
-                'type' => 'VARCHAR',
+                'type'       => 'VARCHAR',
                 'constraint' => '255',
-                'default' => '',
+                'default'    => '',
             ),
-            'sgroupunitUnitId' => array(
-                'type' => 'INT',
+            'sgroupunitUnitId'     => array(
+                'type'       => 'INT',
                 'constraint' => 11,
             ),
-            'sgroupunitUnitRead' => array(
-                'type' => 'INT',
+            'sgroupunitUnitRead'   => array(
+                'type'       => 'INT',
                 'constraint' => 11,
-                'default' => '1',
+                'default'    => '1',
             ),
         ];
         $this->_ci->dbforge->add_field($fields);
         $this->_ci->dbforge->add_key('sgroupunitSgroupNama', TRUE);
         $this->_ci->dbforge->add_key('sgroupunitUnitId', TRUE);
         $this->_ci->dbforge->create_table('s_user_group_unit', TRUE, $attributes);
-        $checkConstraint = $this->getConstraint($this->_ci->db->database, 's_user_group_unit', ['CONSTRAINT_NAME' => 's_user_group_unit_ibfk_1']);
-        $checkConstraint2 = $this->getConstraint($this->_ci->db->database, 's_user_group_unit', ['CONSTRAINT_NAME' => 's_user_group_unit_ibfk_2']);
+        $checkConstraint  = $this->getConstraint($this->_ci->db->database, 's_user_group_unit', [ 'CONSTRAINT_NAME' => 's_user_group_unit_ibfk_1' ]);
+        $checkConstraint2 = $this->getConstraint($this->_ci->db->database, 's_user_group_unit', [ 'CONSTRAINT_NAME' => 's_user_group_unit_ibfk_2' ]);
         if (!$checkConstraint and !$checkConstraint2)
             $this->_ci->dbforge->add_column('s_user_group_unit', [
                 'CONSTRAINT s_user_group_unit_ibfk_1 FOREIGN KEY (sgroupunitUnitId) REFERENCES s_unit (unitId) ON UPDATE CASCADE',
-                'CONSTRAINT s_user_group_unit_ibfk_2 FOREIGN KEY (sgroupunitSgroupNama) REFERENCES s_user_group (sgroupNama) ON DELETE NO ACTION ON UPDATE CASCADE'
+                'CONSTRAINT s_user_group_unit_ibfk_2 FOREIGN KEY (sgroupunitSgroupNama) REFERENCES s_user_group (sgroupNama) ON DELETE NO ACTION ON UPDATE CASCADE',
             ]);
-
 
         //Create Table s_user
         $this->_message("Creating Table s_user...");
         $fields = [
-            'susrNama' => array(
-                'type' => 'VARCHAR',
+            'susrNama'       => array(
+                'type'       => 'VARCHAR',
                 'constraint' => '255',
-                'default' => '',
+                'default'    => '',
             ),
-            'susrPassword' => array(
-                'type' => 'VARCHAR',
+            'susrPassword'   => array(
+                'type'       => 'VARCHAR',
                 'constraint' => '255',
-                'default' => '',
+                'default'    => '',
             ),
             'susrSgroupNama' => array(
-                'type' => 'VARCHAR',
+                'type'       => 'VARCHAR',
                 'constraint' => '255',
-                'default' => '',
+                'default'    => '',
             ),
-            'susrProfil' => array(
-                'type' => 'VARCHAR',
+            'susrProfil'     => array(
+                'type'       => 'VARCHAR',
                 'constraint' => '255',
-                'default' => '',
+                'default'    => '',
             ),
             'susrPertanyaan' => array(
-                'type' => 'VARCHAR',
+                'type'       => 'VARCHAR',
                 'constraint' => '255',
-                'default' => '',
-                'null' => FALSE,
+                'default'    => '',
+                'null'       => FALSE,
             ),
-            'susrJawaban' => array(
-                'type' => 'VARCHAR',
+            'susrJawaban'    => array(
+                'type'       => 'VARCHAR',
                 'constraint' => '255',
-                'default' => '',
-                'null' => FALSE,
+                'default'    => '',
+                'null'       => FALSE,
             ),
-            'susrAvatar' => array(
-                'type' => 'VARCHAR',
+            'susrAvatar'     => array(
+                'type'       => 'VARCHAR',
                 'constraint' => '100',
-                'default' => '',
-                'null' => FALSE,
+                'default'    => '',
+                'null'       => FALSE,
             ),
-            'susrRefIndex' => array(
-                'type' => 'VARCHAR',
+            'susrRefIndex'   => array(
+                'type'       => 'VARCHAR',
                 'constraint' => '100',
-                'default' => '',
-                'null' => FALSE,
+                'default'    => '',
+                'null'       => FALSE,
             ),
-            'susrLastLogin' => array(
+            'susrLastLogin'  => array(
                 'type' => 'DATETIME',
             ),
         ];
         $this->_ci->dbforge->add_field($fields);
         $this->_ci->dbforge->add_key('susrNama', TRUE);
         $this->_ci->dbforge->create_table('s_user', TRUE, $attributes);
-        $checkConstraint = $this->getConstraint($this->_ci->db->database, 's_user', ['CONSTRAINT_NAME' => 's_user_ibfk_1']);
+        $checkConstraint = $this->getConstraint($this->_ci->db->database, 's_user', [ 'CONSTRAINT_NAME' => 's_user_ibfk_1' ]);
         if (!$checkConstraint)
             $this->_ci->dbforge->add_column('s_user', [
-                'CONSTRAINT s_user_ibfk_1 FOREIGN KEY (susrSgroupNama) REFERENCES s_user_group (sgroupNama) ON UPDATE CASCADE'
+                'CONSTRAINT s_user_ibfk_1 FOREIGN KEY (susrSgroupNama) REFERENCES s_user_group (sgroupNama) ON UPDATE CASCADE',
             ]);
-        $checkDatas = $this->get_by_id('s_user', ['susrNama' => 'admin']);
+        $checkDatas = $this->get_by_id('s_user', [ 'susrNama' => 'admin' ]);
         if (!$checkDatas)
             $this->insertDatas('s_user', [
-                'susrNama' => 'admin',
+                'susrNama'       => 'admin',
                 'susrSgroupNama' => 'ADMIN',
-                'susrProfil' => 'Administrator',
-                'susrPassword' => password_hash('admin', PASSWORD_DEFAULT)
+                'susrProfil'     => 'Administrator',
+                'susrPassword'   => password_hash('admin', PASSWORD_DEFAULT),
             ]);
 
         // Create Folder Sessions
@@ -479,40 +500,49 @@ class Init extends Commands
 
     public function controller($table, $cname, $dname)
     {
-        if (!empty($table) and !empty($cname) and !empty($dname)) {
+
+        if (!empty($table) and !empty($cname) and !empty($dname))
+        {
             $this->_command = "Init";
-            $this->_name = "Controller - " . $cname;
+            $this->_name    = "Controller - " . $cname;
 
             $table = strtolower($table);
             $cname = strtolower($cname);
             $dname = ucfirst(strtolower($dname));
 
-            $primary_key = $this->getConstraint($this->_ci->db->database, $table, ['CONSTRAINT_NAME' => 'PRIMARY']);
+            $primary_key = $this->getConstraint($this->_ci->db->database, $table, [ 'CONSTRAINT_NAME' => 'PRIMARY' ]);
             $foreign_key = $this->getConstraint($this->_ci->db->database, $table, 'REFERENCED_COLUMN_NAME IS NOT NULL');
-            $pKey = ($primary_key != false ? $primary_key[0]->COLUMN_NAME : '');
+            $pKey        = ($primary_key != FALSE ? $primary_key[0]->COLUMN_NAME : '');
 
             $getSchmema = $this->getSchemaTable($this->_ci->db->database, $table);
-            if ($getSchmema != false) {
-                if ($foreign_key != false) {
-                    $get_all = "\$this->{\$this->_model_name}->all();";
+            if ($getSchmema != FALSE)
+            {
+                if ($foreign_key != FALSE)
+                {
+                    $get_all   = "\$this->{\$this->_model_name}->all();";
                     $get_by_id = "\$this->{\$this->_model_name}->by_id(\$key);";
-                } else {
-                    $get_all = "\$this->{\$this->_model_name}->get_ref_table('$table');";
+                } else
+                {
+                    $get_all   = "\$this->{\$this->_model_name}->get_ref_table('$table');";
                     $get_by_id = "\$this->{\$this->_model_name}->get_by_id('$table',\$key);";
                 }
 
-                $post = $params = $load_foreign_table = '';
+                $post            = $params = $load_foreign_table = '';
                 $form_validation = "\$" . $pKey . "Old = \$this->input->post('" . $pKey . "Old');";
-                foreach ($getSchmema as $row) {
-                    if ($row->EXTRA != 'auto_increment') {
-                        if ($row->COLUMN_NAME == $pKey) {
+                foreach ($getSchmema as $row)
+                {
+                    if ($row->EXTRA != 'auto_increment')
+                    {
+                        if ($row->COLUMN_NAME == $pKey)
+                        {
                             $form_validation .= "
                             if(empty(\$" . $pKey . "Old))
                                 \$this->form_validation->set_rules('$pKey', '" . (!empty($row->COLUMN_COMMENT) ? $row->COLUMN_COMMENT : $row->COLUMN_NAME) . "', 'trim|xss_clean|required|is_unique[$table.$pKey]');
                             else
                                 \$this->form_validation->set_rules('$pKey', '" . (!empty($row->COLUMN_COMMENT) ? $row->COLUMN_COMMENT : $row->COLUMN_NAME) . "', 'trim|xss_clean|required');
                             ";
-                        } else {
+                        } else
+                        {
                             $form_validation .= "\$this->form_validation->set_rules('$row->COLUMN_NAME','" . (!empty($row->COLUMN_COMMENT) ? $row->COLUMN_COMMENT : $row->COLUMN_NAME) . "','trim|xss_clean" . ($row->IS_NULLABLE == 'NO' ? '|required' : '') . "');\n";
                         }
 
@@ -524,7 +554,7 @@ class Init extends Commands
                         $load_foreign_table .= "\$data['$row->REFERENCED_TABLE_NAME'] = \$this->{\$this->_model_name}->get_ref_table('$row->REFERENCED_TABLE_NAME');\n";
                 }
 
-                $file = "
+                $file        = "
                 <?php
                 defined('BASEPATH') OR exit('No direct script access allowed');
                 define('IS_AJAX', isset(\$_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower(\$_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest');
@@ -630,10 +660,11 @@ class Init extends Commands
                 }
                 ";
                 $create_file = $this->_create_file($file, 'controllers/' . ucfirst($cname));
-                return true;
-            } else {
+                return TRUE;
+            } else
+            {
                 $this->_message('Table Not Found!!');
-                return false;
+                return FALSE;
             }
         } else
             $this->index();
@@ -641,20 +672,24 @@ class Init extends Commands
 
     public function model($table, $cname)
     {
-        if (!empty($cname) and !empty($table)) {
+
+        if (!empty($cname) and !empty($table))
+        {
             $this->_command = "Init";
-            $this->_name = "Model - " . $cname;
+            $this->_name    = "Model - " . $cname;
 
             $table = strtolower($table);
             $cname = strtolower($cname);
 
-            $variable = null;
-            $function = null;
-            $join = null;
+            $variable = NULL;
+            $function = NULL;
+            $join     = NULL;
 
             $foreign_key = $this->getConstraint($this->_ci->db->database, $table, 'REFERENCED_COLUMN_NAME IS NOT NULL');
-            if ($foreign_key != false) {
-                foreach ($foreign_key as $row) {
+            if ($foreign_key != FALSE)
+            {
+                foreach ($foreign_key as $row)
+                {
                     $join .= "        \$this->db->join('" . $row->REFERENCED_TABLE_NAME . "','" . $row->COLUMN_NAME . " = " . $row->REFERENCED_COLUMN_NAME . "','LEFT');\n";
                 }
                 $variable .= "    protected \$table = '$table';\n";
@@ -683,7 +718,7 @@ class Init extends Commands
                     . "            return false;\n"
                     . "    }\n\n";
             }
-            $file = "
+            $file        = "
             <?php
             class Model_$cname extends Model_Master
             {
@@ -702,32 +737,38 @@ class Init extends Commands
 
     public function view($table, $cname)
     {
-        if (!empty($cname) and !empty($table)) {
+
+        if (!empty($cname) and !empty($table))
+        {
             $this->_command = "Init";
-            $this->_name = "View - " . $cname;
+            $this->_name    = "View - " . $cname;
 
             $table = strtolower($table);
             $cname = strtolower($cname);
 
-            $primary_key = $this->getConstraint($this->_ci->db->database, $table, ['CONSTRAINT_NAME' => 'PRIMARY']);
-            $foreign_key = $this->getConstraint($this->_ci->db->database, $table, 'REFERENCED_COLUMN_NAME IS NOT NULL');
-            $pKey = ($primary_key != false ? $primary_key[0]->COLUMN_NAME : '');
+            $primary_key   = $this->getConstraint($this->_ci->db->database, $table, [ 'CONSTRAINT_NAME' => 'PRIMARY' ]);
+            $foreign_key   = $this->getConstraint($this->_ci->db->database, $table, 'REFERENCED_COLUMN_NAME IS NOT NULL');
+            $pKey          = ($primary_key != FALSE ? $primary_key[0]->COLUMN_NAME : '');
             $create_folder = $this->_create_folder('views/pages/' . strtolower($cname));
 
             $getSchmema = $this->getSchemaTable($this->_ci->db->database, $table);
-            $thead = $tbody = $form_body = null;
-            if ($getSchmema != false) {
-                foreach ($getSchmema as $row) {
-                    if ($row->EXTRA != 'auto_increment') {
+            $thead      = $tbody = $form_body = NULL;
+            if ($getSchmema != FALSE)
+            {
+                foreach ($getSchmema as $row)
+                {
+                    if ($row->EXTRA != 'auto_increment')
+                    {
                         $label = !empty($row->COLUMN_COMMENT) ? $row->COLUMN_COMMENT : $row->COLUMN_NAME;
                         $thead .= "<th>$label</th>\n";
                         $tbody .= "<td><?=\$row->" . $row->COLUMN_NAME . "?></td>";
 
-                        if (!empty($row->REFERENCED_TABLE_NAME)) {
+                        if (!empty($row->REFERENCED_TABLE_NAME))
+                        {
                             $form_body .= "
-                                <div class=\"form-group\">
+                                <div class=\"fv-row mb-3\">
                                     <label>$label</label>
-                                    <select class=\"form-control m-select2\" name=\"" . $row->COLUMN_NAME . "\">
+                                    <select data-control=\"select2\" class=\"form-select input_validated\" name=\"" . $row->COLUMN_NAME . "\">
                                             <option value=\"\"></option>
                                     <?php 
                                     foreach(\$$row->REFERENCED_TABLE_NAME as \$row):
@@ -735,14 +776,14 @@ class Init extends Commands
                                     endforeach;
                                     ?>
                                     </select>
-                                    
                                 </div>
                             ";
-                        } else {
+                        } else
+                        {
                             $form_body .= "
-                                <div class=\"form-group\">
+                                <div class=\"fv-row mb-3\">
                                     <label>$label</label>
-                                    <input type=\"text\" class=\"form-control\" name=\"" . $row->COLUMN_NAME . "\" placeholder=\"$label\" aria-describedby=\"$label\" value=\"<?=\$datas!=false?\$datas->" . $row->COLUMN_NAME . ":''?>\">
+                                    <input type=\"text\" class=\"form-control input_validated\" name=\"" . $row->COLUMN_NAME . "\" placeholder=\"$label\" aria-describedby=\"$label\" value=\"<?=\$datas!=false?\$datas->" . $row->COLUMN_NAME . ":''?>\">
                                 </div>
                             ";
                         }
@@ -751,141 +792,100 @@ class Init extends Commands
             }
 
             $index = "
-            <!-- BEGIN: Subheader -->
-            <?php \$this->load->view('layouts/subheader'); ?>
-            <!-- END: Subheader -->
-            
-            <!--Begin::Row-->
-            <!-- begin:: Content -->
-            <div class=\"kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid\">
-                <div class=\"row\">
-                    <div class=\"col-md-12\">
-                        <div id=\"response\"></div>
-                        <!--begin::Portlet-->
-                        <div class=\"kt-portlet\">
-                            <div class=\"kt-portlet__head\">
-                                <div class=\"kt-portlet__head-label\">
-                                    <h3 class=\"kt-portlet__head-title\">
-                                        <?=strtoupper(\$page_judul)?>
-                                    </h3>
-                                </div>
-                                <div class=\"kt-portlet__head-toolbar\">
-                                    <div class=\"kt-portlet__head-actions\">
-                                        <a href=\"<?=\$create_url?>\" class=\"btn btn-outline-primary\">
-                                            <span>
-                                                <i class=\"flaticon2-plus\"></i>
-                                                <span>Create</span>
-                                            </span>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-            
-                            <div class=\"kt-portlet__body\">
-            
-                                <!--begin::Section-->
-                                <div class=\"kt-section\">
-                                    <div class=\"kt-section__content\">
-                                        <div class=\"table-responsive\">
-                                            <table class=\"table table-hover\">
-                                                <thead class=\"thead-light\">
-                                                    <tr>
-                                                        <th>No</th>
-                                                        $thead
-                                                        <th>Action</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                <?php
-                                                if(\$datas!=false)
-                                                {
-                                                    \$i = 1;
-                                                    foreach(\$datas as \$row)
-                                                    {
-                                                        \$key = \$this->encryptions->encode(\$row->$pKey,\$this->config->item('encryption_key'));
-                                                ?>
-                                                    <tr>
-                                                        <th scope=\"row\"><?=\$i++?></th>
-                                                        $tbody
-                                                        <td>
-                                                        <a href=\"<?=\$update_url.\$key?>\" title=\"Update\" class=\"btn btn-sm btn-outline-primary btn-elevate btn-circle btn-icon\">
-                                                            <span>
-                                                                <i class=\"fa fa-pencil-alt\"></i>
-                                                            </span>
-                                                        </a>
-                                                        <a href=\"<?=\$delete_url.\$key?>\" title=\"Delete\" id='ts_remove_row<?= \$i; ?>' class=\"ts_remove_row btn btn-sm btn-outline-danger btn-elevate btn-circle btn-icon\">
-                                                            <span>
-                                                                <i class=\"fa fa-trash-alt\"></i>
-                                                            </span>
-                                                        </a>
-                                                        </td>
-                                                    </tr>
-                                                <?php
-                                                    }
-                                                }
-                                                ?>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-            
-                                <!--end::Section-->
-                            </div>
-                        </div>
-            
-                        <!--end::Portlet-->
+            <div class=\"card shadow-sm\">
+                <div class=\"card-header\">
+                    <h3 class=\"card-title\"><?= strtoupper(\$page_judul) ?></h3>
+                    <div class=\"card-toolbar\">
+                    <a href=\"<?= \$create_url ?>\" class=\"btn btn-light-primary\">
+                        <i class=\"ki-duotone ki-abstract-10 fs-1\">
+                        <span class=\"path1\"></span>
+                        <span class=\"path2\"></span>
+                        </i>
+                        Create
+                    </a>
+                    </div>
+                </div>
+                <div class=\"card-body\">
+                    <div id=\"overlay-element\">
+                    <div class=\"table-responsive\">
+                        <table class=\"table table-hover table-bordered\" id=\"table_general\">
+                        <thead class=\"fw-bold fs-6 text-gray-800\">
+                            <th>No</th>
+                            $thead
+                            <th class=\"text-center\">Action</th>
+                        </thead>
+                        <tbody>
+                            <?php
+                                if(\$datas!=false)
+                                {
+                                    \$i = 1;
+                                    foreach(\$datas as \$row)
+                                    {
+                                        \$key = \$this->encryptions->encode(\$row->$pKey,\$this->config->item('encryption_key'));
+                                ?>
+                                    <tr>
+                                        <th class=\"text-end min-w-25px\" scope=\"row\"><?=\$i++?></th>
+                                        $tbody
+                                        <td class=\"text-center min-w-150px\">
+                                            <a href=\"<?= \$update_url . \$key ?>\"
+                                                class=\"btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1\" data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" title=\"Edit Pengguna\">
+                                                <i class=\"ki-duotone ki-pencil fs-2\">
+                                                    <span class=\"path1\"></span>
+                                                    <span class=\"path2\"></span>
+                                                </i>
+                                            </a>
+                                            <a href=\"<?= \$delete_url . \$key ?>\"
+                                                class=\"ts_remove_row btn btn-icon btn-bg-light btn-active-color-danger btn-sm\" data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" title=\"Hapus Pengguna\">
+                                                <i class=\"ki-duotone ki-trash fs-2\">
+                                                    <span class=\"path1\"></span>
+                                                    <span class=\"path2\"></span>
+                                                    <span class=\"path3\"></span>
+                                                    <span class=\"path4\"></span>
+                                                    <span class=\"path5\"></span>
+                                                </i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                <?php
+                                    }
+                                }
+                                ?>
+                        </tbody>
+                        </table>
+                    </div>
                     </div>
                 </div>
             </div>
-            <!--End::Row-->
             ";
 
             $create_file = $this->_create_file($index, 'views/pages/' . strtolower($cname) . '/index');
 
-            $form = "
-            <!-- BEGIN: Subheader -->
-            <?php \$this->load->view('layouts/subheader'); ?>
-            <!-- END: Subheader -->
-
-            <!--Begin::Row-->
-            <!-- begin:: Content -->
-            <div class=\"kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid\">
-                <div class=\"row\">
-                    <div class=\"col-md-12\">
-                        <div id=\"response\"></div>
-                        <!--begin::Portlet-->
-                        <div class=\"kt-portlet\">
-                            <div class=\"kt-portlet__head\">
-                                <div class=\"kt-portlet__head-label\">
-                                    <h3 class=\"kt-portlet__head-title\">
-                                        <?=strtoupper(\$page_judul)?>
-                                    </h3>
-                                </div>
-                            </div>
-
-                            <!--begin::Form-->
-                            <form class=\"kt-form\" action=\"<?=\$save_url?>\" method=\"post\" id=\"form_form\">
-                                <div class=\"kt-portlet__body\">
-                                    <input type=\"hidden\" name=\"" . $pKey . "Old\" value=\"<?=\$datas!=false?\$datas->$pKey:''?>\">
-                                    $form_body
-                                </div>
-                                <div class=\"kt-portlet__foot\">
-                                    <div class=\"kt-form__actions\">
-                                        <button type=\"submit\" id=\"btn_save\" class=\"btn btn-primary\">Save</button>
-                                        <button type=\"reset\" class=\"btn btn-secondary\">Cancel</button>
-                                    </div>
-                                </div>
-                            </form>
-
-                            <!--end::Form-->
+            $form        = "
+            <form class=\"kt-form\" action=\"<?= \$save_url ?>\" method=\"post\" id=\"kt_form_validation\"
+                data-kt-redirect-url=\"/<?= \$this->uri->segment(1) ?>\">
+                <div class=\"card shadow-sm\">
+                    <div class=\"card-header ribbon ribbon-end ribbon-clip\">
+                        <?php \$color = \$status_page == 'Create' ? 'bg-primary' : (\$status_page == 'Update' ? 'bg-warning' : 'bg-info') ?>
+                        <div class=\"ribbon-label\">
+                            <?= \$status_page ?>
+                            <span class=\"ribbon-inner <?= \$color ?>\"></span>
                         </div>
-
-                        <!--end::Portlet-->
+                        <h3 class=\"card-title\"><?= strtoupper(\$page_judul) ?></h3>
+                    </div>
+                    <div class=\"card-body\">
+                        <input type=\"hidden\" name=\"" . $pKey . "Old\" value=\"<?= \$datas != FALSE ? \$datas->$pKey  : '' ?>\">
+                        $form_body
+                    </div>
+                    <div class=\"card-footer\">
+                        <button type=\"submit\" id=\"kt_btn_submit\" class=\"btn btn-primary hover-scale\">
+                            <span class=\"indicator-label\">Simpan</span>
+                            <span class=\"indicator-progress\">Please wait...
+                                <span class=\"spinner-border spinner-border-sm align-middle ms-2\"></span></span>
+                        </button>
+                        <a href=\"/<?= \$back_url ?>\" class=\"btn btn-secondary ms-2 hover-scale\">Kembali</a>
                     </div>
                 </div>
-            </div>
-            <!--End::Row-->
+            </form>
             ";
             $create_file = $this->_create_file($form, 'views/pages/' . strtolower($cname) . '/form');
         }
@@ -893,24 +893,28 @@ class Init extends Commands
 
     public function crud($table, $cname, $dname)
     {
-        if (!empty($table) and !empty($cname) and !empty($dname)) {
+
+        if (!empty($table) and !empty($cname) and !empty($dname))
+        {
             $controller = $this->controller($table, $cname, $dname);
-            if ($controller != false) {
+            if ($controller != FALSE)
+            {
                 $this->model($table, $cname);
                 $this->view($table, $cname);
             }
             $this->insertDatas('s_user_modul_ref', [
-                'susrmodulNama' => $cname,
-                'susrmodulNamaDisplay' => $dname,
+                'susrmodulNama'            => $cname,
+                'susrmodulNamaDisplay'     => $dname,
                 'susrmodulSusrmdgroupNama' => 'tempmenu',
-                'susrmodulIsLogin' => 1,
-                'susrmodulUrut' => 1
+                'susrmodulIsLogin'         => 1,
+                'susrmodulUrut'            => 1,
             ]);
             $this->insertDatas('s_user_group_modul', [
-                'sgroupmodulSgroupNama' => 'ADMIN',
+                'sgroupmodulSgroupNama'    => 'ADMIN',
                 'sgroupmodulSusrmodulNama' => $cname,
-                'sgroupmodulSusrmodulRead' => 1
+                'sgroupmodulSusrmodulRead' => 1,
             ]);
         }
     }
+
 }

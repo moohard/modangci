@@ -1,50 +1,33 @@
-<!-- BEGIN: Subheader -->
-<?php $this->load->view('layouts/subheader'); ?>
-<!-- END: Subheader -->
-
-<!-- begin:: Content -->
-<div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-    <div class="row">
-        <div class="col-md-12">
-            <!--begin::Portlet-->
-            <div class="kt-portlet">
-                <div class="kt-portlet__head">
-                    <div class="kt-portlet__head-label">
-                        <h3 class="kt-portlet__head-title">
-                            <?=strtoupper($page_judul)?>
-                        </h3>
-                    </div>
-                </div>
-
-                <!--begin::Form-->
-                <form class="kt-form" action="<?=$show_url?>" method="post" id="form_show">
-                    <div class="kt-portlet__body">
-                        <div class="form-group">
-                            <label>Role</label>
-                            <select class="form-control m-select2" name="hakakses">
-                                <option value=""></option>
-                                <?php 
-							foreach($s_user_group as $row):
-								echo '<option value="'.$row->sgroupNama.'" >'.$row->sgroupNama.' - '.$row->sgroupKeterangan.'</option>';
-							endforeach;
-							?>
-                            </select>
-
-                        </div>
-                    </div>
-                    <div class="kt-portlet__foot">
-                        <div class="kt-form__actions">
-                            <button type="submit" id="btn_save" class="btn btn-primary">Show</button>
-                        </div>
-                    </div>
-                </form>
-
-                <!--end::Form-->
-            </div>
-
-            <!--end::Portlet-->
+<div class="card shadow-sm mb-5">
+    <form action="<?= $show_url ?>" method="POST" id="kt_form_show">
+        <div class="card-header">
+            <h3 class="card-title"><?= strtoupper($page_judul) ?></h3>
         </div>
-    </div>
-</div>
+        <div class="card-body">
+            <div class="fv-row">
+                <div class="form-floating">
+                    <select class="form-select input_validated" data-control="select2" name="hakakses"
+                        data-placeholder="Pilih Role" id="floating-select">
+                        <option value=""></option>
+                        <?php
 
+                        foreach ($s_user_group as $row) :
+                            echo '<option value="' . $row->sgroupNama . '" >' . $row->sgroupNama . ' - ' . $row->sgroupKeterangan . '</option>';
+                        endforeach;
+                        ?>
+                    </select>
+                    <label for="floating-select">Role</label>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer">
+            <button type="submit" id="kt_btn_show" class="btn btn-primary hover-scale">
+                <span class="indicator-label">Show</span>
+                <span class="indicator-progress">Please wait...
+                    <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
+            </button>
+        </div>
+    </form>
+</div>
+<div id="response"></div>
 <div id="response"></div>

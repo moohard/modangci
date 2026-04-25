@@ -1,52 +1,34 @@
-<!-- BEGIN: Subheader -->
-<?php $this->load->view('layouts/subheader'); ?>
-<!-- END: Subheader -->
-
-<!--Begin::Row-->
-<!-- begin:: Content -->
-<div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-    <div class="row">
-        <div class="col-md-12">
-            <div id="response"></div>
-            <!--begin::Portlet-->
-            <div class="kt-portlet">
-                <div class="kt-portlet__head">
-                    <div class="kt-portlet__head-label">
-                        <h3 class="kt-portlet__head-title">
-                            <?= strtoupper($page_judul) ?>
-                        </h3>
-                    </div>
-                </div>
-
-                <!--begin::Form-->
-                <form class="kt-form" action="<?= $save_url ?>" method="post" id="form_form">
-                    <div class="kt-portlet__body">
-                        <input type="hidden" name="unitIdOld" value="<?= $datas != false ? $datas->unitId : '' ?>">
-
-                        <div class="form-group">
-                            <label>Kode Unit</label>
-                            <input type="text" class="form-control" name="unitKode" placeholder="Kode Unit" aria-describedby="Kode Unit" value="<?= $datas != false ? $datas->unitKode : '' ?>">
-                        </div>
-
-                        <div class="form-group">
-                            <label>Nama Unit</label>
-                            <input type="text" class="form-control" name="unitNama" placeholder="Nama Unit" aria-describedby="Nama Unit" value="<?= $datas != false ? $datas->unitNama : '' ?>">
-                        </div>
-
-                    </div>
-                    <div class="kt-portlet__foot">
-                        <div class="kt-form__actions">
-                            <button type="submit" id="btn_save" class="btn btn-primary">Save</button>
-                            <button type="reset" class="btn btn-secondary">Cancel</button>
-                        </div>
-                    </div>
-                </form>
-
-                <!--end::Form-->
+<form class="kt-form" action="<?= $save_url ?>" method="post" id="kt_form_validation"
+    data-kt-redirect-url="/<?= $back_url ?>">
+    <div class="card shadow-sm">
+        <div class="card-header ribbon ribbon-end ribbon-clip">
+            <?php $color = $status_page == 'Create' ? 'bg-primary' : ($status_page == 'Update' ? 'bg-warning' : 'bg-info') ?>
+            <div class="ribbon-label">
+                <?= $status_page ?>
+                <span class="ribbon-inner <?= $color ?>"></span>
             </div>
-
-            <!--end::Portlet-->
+            <h3 class="card-title"><?= strtoupper($page_judul) ?></h3>
+        </div>
+        <div class="card-body">
+            <input type="hidden" name="unitIdOld" value="<?= $datas != FALSE ? $datas->unitId : '' ?>">
+            <div class="fv-row mb-3">
+                <label>Kode Unit</label>
+                <input type="text" class="form-control" name="unitKode" placeholder="Kode Unit"
+                    aria-describedby="Kode Unit" value="<?= $datas != FALSE ? $datas->unitKode : '' ?>">
+            </div>
+            <div class="fv-row mb-3">
+                <label>Nama Unit</label>
+                <input type="text" class="form-control" name="unitNama" placeholder="Nama Unit"
+                    aria-describedby="Nama Unit" value="<?= $datas != FALSE ? $datas->unitNama : '' ?>">
+            </div>
+        </div>
+        <div class="card-footer">
+            <button type="submit" id="kt_btn_submit" class="btn btn-primary hover-scale">
+                <span class="indicator-label">Simpan</span>
+                <span class="indicator-progress">Please wait...
+                    <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
+            </button>
+            <a href="/<?= $back_url ?>" class="btn btn-secondary ms-2 hover-scale">Kembali</a>
         </div>
     </div>
-</div>
-<!--End::Row-->
+</form>

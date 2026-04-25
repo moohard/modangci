@@ -1,95 +1,158 @@
 "use strict";
+const KTSubmitGeneral = (() => {
+  let form;
+  let submitButton;
+  let validator;
+  let inputValidated;
+  let dataValidated = [];
+  let respons;
+  let deleteButton;
+  let overlayForm;
+  let blockUI;
 
-// Class Definition
-var FormGeneral = function() {
-
-    var handleClickDelete = function() {
-        $(".ts_remove_row").click(function(e) {
-            e.preventDefault();
-            var idLink = '#'+$(this).attr('id');
-            
-            swal.fire({
-                title: "Apakah Anda Yakin Akan Hapus Data?",
-                text: "Data Tidak Dapat Dikembalikan!!",
-                type: "warning",
-                showCancelButton: !0,
-                confirmButtonText: "Yes, Hapus!"
-            }).then(function(e) {
-                e.value && 
-                    $.ajax(
-                    {
-                        url:$(idLink).attr('href'),
-                        success:function(data) 
-                        {
-                            var res = $.parseJSON(data);
-                            $('#response').fadeIn('slow').html(res.response);
-                            swal.fire({title: "Deleted!", text: res.message, type: res.status}).then(
-                                function(){ 
-                                    location.reload();
-                                }
-                            ) ;                   
-                        }
-                    });
-            })    
+  const handleValidation = () => {
+    inputValidated.forEach((element) => {
+      const { type, name } = element;
+      if (type == "text" || type == "number") {
+        const field = `"${name}":{"validators":{"notEmpty":{"message":"Field Harus Diisi !!"}}}`;
+        dataValidated.push(field);
+      } else if (type == "select-one") {
+        const field = `"${name}":{"validators":{"notEmpty":{"message":"Silakan Pilih !!"}}}`;
+        $(form.querySelector(`[name="${name}"]`)).on("change", function () {
+          validator.revalidateField(`${name}`);
         });
-    }
-
-    var handleSubmit = function(form) {
-        $('#response').html('');
-        var button = $('#btn_save');
-        var button_text = button.text();
-        button.prop( "disabled", true );
-        button.addClass('disabled');
-        button.text('Sedang Memproses...');
-        $.ajax({
-            type: $(form).attr('method'),
-            url: $(form).attr('action'),
-            data: $(form).serialize(),
-            success: function(data) {
-                try {
-                    var res = $.parseJSON(data);
-                    $('#response').fadeIn('slow').html(res.response);
-                    swal.fire({
-                        position: "top-right",
-                        type: res.status,
-                        title: res.message,
-                        showConfirmButton: !1,
-                        timer: 1500
-                    });
-                } catch(err)
-                {
-                    $('#response').fadeIn('slow').html(data);
+        dataValidated.push(field);
+      }
+    });
+    dataValidated = JSON.parse(`{${dataValidated.toString()}}`);
+    validator = FormValidation.formValidation(form, {
+      fields: dataValidated,
+      plugins: {
+        trigger: new FormValidation.plugins.Trigger(),
+        bootstrap: new FormValidation.plugins.Bootstrap5({
+          rowSelector: ".fv-row",
+          eleInvalidClass: "",
+          eleValidClass: "",
+        }),
+      },
+    });
+  };
+  const handleSubmitAjax = () => {
+    submitButton.addEventListener("click", (e) => {
+      e.preventDefault();
+      validator.validate().then((status) => {
+        if (status == "Valid") {
+          submitButton.setAttribute("data-kt-indicator", "on");
+          submitButton.disabled = true;
+          axios
+            .post(
+              submitButton.closest("form").getAttribute("action"),
+              new FormData(form),
+              {
+                headers: {
+                  "X-Requested-With": "XMLHttpRequest",
+                },
+              }
+            )
+            .then((r) => {
+              const { message, status, response } = r.data;
+              Swal.fire({
+                html: message,
+                icon: status,
+                showConfirmButton: false,
+                timer: 2000,
+              }).then(() => {
+                if (status == "success") {
+                  location.href = form.getAttribute("data-kt-redirect-url");
                 }
-                
-                
-                button.prop( "disabled", false );
-                button.removeClass('disabled');
-                button.text(button_text);  
-            }
-        })
-    }
-
-    var handleSubmitForm = function() {
-        $("#form_form").validate({
-            rules: {
-                
-            },
-            submitHandler: function(e) {
-                handleSubmit(e);
-                return false
-            }
-        });
-    }
-
-    return {
-        // public functions
-        init: function() {
-            handleSubmitForm();
-            handleClickDelete();
+              });
+            })
+            .catch(function (error) {
+              Swal.fire({
+                text: "Sorry, looks like there are some errors detected, please try again.",
+                icon: "error",
+                buttonsStyling: false,
+                confirmButtonText: "Ok, got it!",
+                customClass: {
+                  confirmButton: "btn btn-primary",
+                },
+              });
+            })
+            .then(() => {
+              submitButton.removeAttribute("data-kt-indicator");
+              submitButton.disabled = false;
+            });
+        } else {
         }
-    };
-}();
-
-jQuery(document).ready(function() {
-    FormGeneral.init()
+      });
+    });
+  };
+  const handleClickDelete = () => {
+    deleteButton.forEach((b) => {
+      b.addEventListener("click", (e) => {
+        e.preventDefault();
+        const $this = e.currentTarget;
+        blockUI.block();
+        Swal.fire({
+          html: `Apakah Anda Yakin Menghapus Data Ini?`,
+          icon: "question",
+          buttonsStyling: false,
+          showCancelButton: true,
+          confirmButtonText: "Ya, Hapus",
+          cancelButtonText: "Tidak, Batalkan!!",
+          customClass: {
+            confirmButton: "btn btn-success hover-scale",
+            cancelButton: "btn btn-danger hover-scale",
+          },
+        }).then((result) => {
+          if (result.isConfirmed) {
+            axios
+              .delete($this.href, {
+                headers: {
+                  "X-Requested-With": "XMLHttpRequest",
+                },
+              })
+              .then((r) => {
+                const { message, status } = r.data;
+                Swal.fire({
+                  html: message,
+                  icon: status,
+                  showConfirmButton: false,
+                  timer: 1500,
+                }).then(() => {
+                  if (status == "success") location.reload();
+                });
+              })
+              .catch((error) => {
+                console.error("Error deleting resource:", error);
+              });
+          } else {
+            blockUI.release();
+          }
+        });
+      });
+    });
+  };
+  return {
+    init: function () {
+      respons = document.getElementById("response");
+      overlayForm = document.getElementById("table_general");
+      blockUI = new KTBlockUI(overlayForm, {
+        message:
+          '<div class="blockui-message"><span class="spinner-border text-primary"></span> Sedang Menghapus ...</div>',
+      });
+      form = document.querySelector("#kt_form_validation") ?? false;
+      submitButton = document.querySelector("#kt_btn_submit");
+      deleteButton = document.querySelectorAll(".ts_remove_row") ?? false;
+      if (deleteButton != false) handleClickDelete();
+      if (form != false) {
+        inputValidated = form.querySelectorAll(".input_validated");
+        handleValidation();
+        handleSubmitAjax();
+      }
+    },
+  };
+})();
+KTUtil.onDOMContentLoaded(function () {
+  KTSubmitGeneral.init();
 });

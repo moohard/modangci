@@ -1,140 +1,101 @@
 <!DOCTYPE html>
-
-<!--
-Template Name: Metronic - Responsive Admin Dashboard Template build with Twitter Bootstrap 4 & Angular 8
-Author: KeenThemes
-Website: http://www.keenthemes.com/
-Contact: support@keenthemes.com
-Follow: www.twitter.com/keenthemes
-Dribbble: www.dribbble.com/keenthemes
-Like: www.facebook.com/keenthemes
-Purchase: http://themeforest.net/item/metronic-responsive-admin-dashboard-template/4021469?ref=keenthemes
-Renew Support: http://themeforest.net/item/metronic-responsive-admin-dashboard-template/4021469?ref=keenthemes
-License: You must have a valid license purchased only from themeforest(the above link) in order to legally use the theme for your project.
--->
 <html lang="en">
 
-<!-- begin::Head -->
-
 <head>
-	<base href="../../../">
+	<base href="../../../" />
+	<title>Metronic - The World's #1 Selling Tailwind CSS & Bootstrap Admin Template by KeenThemes</title>
 	<meta charset="utf-8" />
-	<title><?= base_url(); ?> | Login</title>
-	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-	<!--begin::Fonts -->
-	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700|Roboto:300,400,500,600,700">
-
-	<!--end::Fonts -->
-
-	<!--begin::Page Custom Styles(used by this page) -->
-	<link href="<?= base_url(); ?>assets/css/pages/login/login-3.css" rel="stylesheet" type="text/css" />
-
-	<!--end::Page Custom Styles -->
-
-	<!--begin::Global Theme Styles(used by all pages) -->
+	<meta name="description"
+		content="The most advanced Tailwind CSS & Bootstrap 5 Admin Theme with 40 unique prebuilt layouts on Themeforest trusted by 100,000 beginners and professionals. Multi-demo, Dark Mode, RTL support and complete React, Angular, Vue, Asp.Net Core, Rails, Spring, Blazor, Django, Express.js, Node.js, Flask, Symfony & Laravel versions. Grab your copy now and get life-time updates for free." />
+	<meta name="keywords"
+		content="tailwind, tailwindcss, metronic, bootstrap, bootstrap 5, angular, VueJs, React, Asp.Net Core, Rails, Spring, Blazor, Django, Express.js, Node.js, Flask, Symfony & Laravel starter kits, admin themes, web design, figma, web development, free templates, free admin themes, bootstrap theme, bootstrap template, bootstrap dashboard, bootstrap dak mode, bootstrap button, bootstrap datepicker, bootstrap timepicker, fullcalendar, datatables, flaticon" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<meta property="og:locale" content="en_US" />
+	<meta property="og:type" content="article" />
+	<meta property="og:title"
+		content="Metronic - The World's #1 Selling Tailwind CSS & Bootstrap Admin Template by KeenThemes" />
+	<meta property="og:url" content="https://keenthemes.com/metronic" />
+	<meta property="og:site_name" content="Metronic by Keenthemes" />
+	<link rel="canonical" href="http://preview.keenthemes.comauthentication/layouts/corporate/sign-in.html" />
+	<link rel="shortcut icon" href="<?= base_url(); ?>assets/media/logos/favicon.ico" />
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Text:ital@0;1&display=swap" rel="stylesheet">
+	<link href="<?= base_url(); ?>assets/css/pages/login/login-main.css" rel="stylesheet" type="text/css" />
 	<link href="<?= base_url(); ?>assets/plugins/global/plugins.bundle.css" rel="stylesheet" type="text/css" />
 	<link href="<?= base_url(); ?>assets/css/style.bundle.css" rel="stylesheet" type="text/css" />
-
-	<!--end::Global Theme Styles -->
-
-	<!--begin::Layout Skins(used by all pages) -->
-	<link href="<?= base_url(); ?>assets/css/skins/header/base/light.css" rel="stylesheet" type="text/css" />
-	<link href="<?= base_url(); ?>assets/css/skins/header/menu/light.css" rel="stylesheet" type="text/css" />
-	<link href="<?= base_url(); ?>assets/css/skins/brand/dark.css" rel="stylesheet" type="text/css" />
-	<link href="<?= base_url(); ?>assets/css/skins/aside/dark.css" rel="stylesheet" type="text/css" />
-
-	<!--end::Layout Skins -->
-	<link rel="shortcut icon" href="<?= base_url(); ?>assets/media/logos/favicon.ico" />
+	<script>
+		if (window.top != window.self) { window.top.location.replace(window.self.location.href); }
+	</script>
 </head>
 
-<!-- end::Head -->
-
-<!-- begin::Body -->
-
-<body class="kt-quick-panel--right kt-demo-panel--right kt-offcanvas-panel--right kt-header--fixed kt-header-mobile--fixed kt-subheader--enabled kt-subheader--fixed kt-subheader--solid kt-aside--enabled kt-aside--fixed kt-page--loading">
-
-	<!-- begin:: Page -->
-	<div class="kt-grid kt-grid--ver kt-grid--root">
-		<div class="kt-grid kt-grid--hor kt-grid--root  kt-login kt-login--v3 kt-login--signin" id="kt_login">
-			<div class="kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" style="background-image: url(<?= base_url(); ?>assets/media//bg/bg-3.jpg);">
-				<div class="kt-grid__item kt-grid__item--fluid kt-login__wrapper">
-					<div class="kt-login__container">
-						<div class="kt-login__logo">
-							<a href="#">
-								<img src="<?= base_url(); ?>assets/media/logos/logo-5.png">
-							</a>
-						</div>
-						<div class="kt-login__signin">
-							<div class="kt-login__head">
-								<h3 class="kt-login__title"><?= $_SERVER['SERVER_NAME']; ?></h3>
+<body id="kt_body">
+	<script>
+		var defaultThemeMode = "light";
+		var themeMode;
+		if (document.documentElement) {
+			if (document.documentElement.hasAttribute("data-bs-theme-mode")) {
+				themeMode = document.documentElement.getAttribute("data-bs-theme-mode");
+			} else {
+				if (localStorage.getItem("data-bs-theme") !== null) {
+					themeMode = localStorage.getItem("data-bs-theme");
+				} else {
+					themeMode = defaultThemeMode;
+				}
+			}
+			if (themeMode === "system") {
+				themeMode = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+			}
+			document.documentElement.setAttribute("data-bs-theme", themeMode);
+		}
+	</script>
+	<!-- From Uiverse.io by chase2k25 -->
+	<div class="d-flex flex-column flex-root" id="kt_app_root">
+		<div class="d-flex flex-column flex-lg-row flex-column-fluid">
+			<div class="d-flex flex-column flex-lg-row-fluid w-lg-50 p-10 order-2 order-lg-1">
+				<div class="d-flex flex-center flex-column flex-lg-row-fluid">
+					<div class="w-lg-400px p-10 card-form-login" id="not_filter">
+						<form class="form w-100" novalidate="novalidate" id="kt_form_validation"
+							data-kt-redirect-url="/home" action="<?= base_url() . 'otentifikasi' ?>">
+							<div class="text-center mb-11">
+								<h1 class="text-gray-900 fw-bolder mb-3">Sign In</h1>
+								<div class="text-gray-500 fw-semibold fs-6"><?= $_SERVER['SERVER_NAME']; ?></div>
 							</div>
-							<form class="kt-form" action="<?= base_url() . 'otentifikasi' ?>" method="post" id="form_validation">
-								<div class="input-group">
-									<input class="form-control" type="text" placeholder="Username" name="username" autocomplete="off">
+							<div class="fv-row mb-8">
+								<div class="form-floating">
+									<input type="text" placeholder="Masukkan Username" name="username"
+										autocomplete="off" class="form-control bg-transparent input_validated" />
+									<label for="username">Username</label>
 								</div>
-								<div class="input-group">
-									<input class="form-control" type="password" placeholder="Password" name="password">
+							</div>
+							<div class="fv-row mb-4">
+								<div class="form-floating">
+									<input type="password" placeholder="Masukkan Password" name="password"
+										autocomplete="off" class="form-control bg-transparent input_validated" />
+									<label for="password">Password</label>
 								</div>
-								<div class="kt-login__actions">
-									<button id="kt_login_signin_submit" class="btn btn-brand btn-elevate kt-login__btn-primary">Sign In</button>
-								</div>
-							</form>
-						</div>
+							</div>
+							<div class="d-grid mb-10">
+								<button type="submit" id="kt_btn_submit" class="btn btn-primary">
+									<span class="indicator-label">Sign In</span>
+									<span class="indicator-progress">Please wait...
+										<span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
+								</button>
+							</div>
+						</form>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
 
-	<!-- end:: Page -->
 
-	<!-- begin::Global Config(global config for global JS sciprts) -->
 	<script>
-		var KTAppOptions = {
-			"colors": {
-				"state": {
-					"brand": "#5d78ff",
-					"dark": "#282a3c",
-					"light": "#ffffff",
-					"primary": "#5867dd",
-					"success": "#34bfa3",
-					"info": "#36a3f7",
-					"warning": "#ffb822",
-					"danger": "#fd3995"
-				},
-				"base": {
-					"label": [
-						"#c5cbe3",
-						"#a1a8c3",
-						"#3d4465",
-						"#3e4466"
-					],
-					"shape": [
-						"#f0f3ff",
-						"#d9dffa",
-						"#afb4d4",
-						"#646c9a"
-					]
-				}
-			}
-		};
+		var hostUrl = "<?= base_url(); ?>assets/";
 	</script>
-
-	<!-- end::Global Config -->
-
-	<!--begin::Global Theme Bundle(used by all pages) -->
-	<script src="<?= base_url(); ?>assets/plugins/global/plugins.bundle.js" type="text/javascript"></script>
-	<script src="<?= base_url(); ?>assets/js/scripts.bundle.js" type="text/javascript"></script>
-
-	<!--end::Global Theme Bundle -->
-
-	<!--begin::Page Scripts(used by this page) -->
-	<script src="<?= base_url(); ?>assets/js/pages/custom/pages/user/login.js" type="text/javascript"></script>
-
-	<!--end::Page Scripts -->
+	<script src="<?= base_url(); ?>assets/plugins/global/plugins.bundle.js"></script>
+	<script src="<?= base_url(); ?>assets/js/scripts.bundle.js"></script>
+	<script src="<?= base_url(); ?>assets/js/pages/custom/pages/form-submit-general.js"></script>
 </body>
-
-<!-- end::Body -->
 
 </html>
